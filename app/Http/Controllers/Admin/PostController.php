@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Post;
 use App\Category;
+use App\Tag;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 
@@ -30,8 +31,9 @@ class PostController extends Controller
     public function create()
     {
         $categories = Category::orderBy('name', 'asc')->get(); // Ricordare di importare il namespace della classe Category -> use App\Category;
-        
-        return view('admin.post.create', compact('categories'));
+        $tags =  Tag::orderBy('name', 'asc')->get(); // Ricordare di importare il namespace use App\Tag;
+
+        return view('admin.post.create', compact('categories','tags'));
     }
 
     /**
@@ -45,7 +47,8 @@ class PostController extends Controller
         $params = $request->validate([
             'title' => 'required | max:255 | min:5',
             'content' => 'required',
-            'category_id' => 'nullable | exists:App\Category,id' // Ricordarsi di aggiungerlo al 'fillable'
+            'category_id' => 'nullable | exists:App\Category,id', // Ricordarsi di aggiungerlo al 'fillable'
+            'tags.*' => 'exists:tags,id' // Devono esistere nella tabella tags,id
         ]);
 
         // Aggiungo controllo nella quale lo slug sia univoco
@@ -54,6 +57,12 @@ class PostController extends Controller
         $params['slug'] = Post::getUniqueSlugFrom($params['title']);
 
         $post = Post::create($params);
+
+        // Dopo la creazione del Post eseguo il controllo sui Tags
+        if(array_key_exists('tags', $params)) {
+            $tags = $params['tags'];
+            $post->tags()->sync($tags);
+        }
 
         return redirect()->route('admin.post.show', $post);
     }
@@ -78,8 +87,9 @@ class PostController extends Controller
     public function edit(Post $post)
     {
         $categories = Category::orderBy('name', 'asc')->get(); // Ricordare di importare il namespace della classe Category -> use App\Category;
-        
-        return view('admin.post.edit', compact('categories', 'post')); // Gli passo $post per poter stampare i date nelle views
+        $tags =  Tag::orderBy('name', 'asc')->get(); // Ricordare di importare il namespace use App\Tag;
+
+        return view('admin.post.edit', compact('categories', 'post','tags')); // Gli passo $post per poter stampare i date nelle views
     }
 
     /**
@@ -94,7 +104,8 @@ class PostController extends Controller
         $params = $request->validate([
             'title' => 'required | max:255 | min:5',
             'content' => 'required',
-            'category_id' => 'nullable | exists:App\Category,id' // Ricordarsi di aggiungerlo al 'fillable'
+            'category_id' => 'nullable | exists:App\Category,id', // Ricordarsi di aggiungerlo al 'fillable'
+            'tags.*' => 'exists:tags,id' // Devono esistere nella tabella tags,id
         ]);
 
         // Aggiungo controllo: Se 'title' è diverso dalla proprietà title di $post allora rigeneriamo lo slug
@@ -107,6 +118,12 @@ class PostController extends Controller
         }
 
         $post->update($params);
+
+        if(array_key_exists('tags', $params)) {
+            $post->tags()->sync($params['tags']);
+        } else {
+            $post->tags()->sync([]);
+        }
 
         return redirect()->route('admin.post.show', $post);
     }

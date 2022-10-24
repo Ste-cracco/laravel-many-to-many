@@ -47,8 +47,18 @@
             </div>
           @enderror
         </div>
-        
 
+        
+        <div class="form-group">
+          <label for="category">Tag: </label>
+          @foreach ($tags as $tag)
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" name="tags[]" @if (in_array($tag->id, old('tags',[]) ) ) checked  @endif type="checkbox" id="tag-{{$tag->id}}" value="{{ $tag->id }}"> <!-- *Attenzione all' attributo name -->
+              <label class="form-check-label" for="tag-{{$tag->id}}">{{ $tag->name }}</label>
+            </div>
+            @endforeach 
+        </div>            
+              
 
         <div class="form-group">
           <label for="content">Contenuto</label>

@@ -23,6 +23,7 @@
               <th scope="col">#</th>
               <th scope="col">Title</th>
               <th scope="col">Category</th>
+              <th scope="col">Tags</th>
               <th scope="col">Slug</th>
               <th scope="col">Created at</th>
               <th colspan="2"></th>
@@ -34,6 +35,13 @@
               <th scope="row">{{ $post->id }}</th>
               <td>{{ $post->title }}</td>
               <td>{{ $post->category ? $post->category->name : 'nessuna categoria' }}</td> 
+              <td>
+                <ul>
+                  @foreach ($post->tags as $tag)
+                      <li>{{ $tag->name }}</li>
+                  @endforeach
+                </ul>
+              </td>
               <td>{{ $post->slug }}</td>
               <td>{{ $post->created_at }}</td>
               <td>
