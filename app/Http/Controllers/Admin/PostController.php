@@ -47,14 +47,20 @@ class PostController extends Controller
         $params = $request->validate([
             'title' => 'required | max:255 | min:5',
             'content' => 'required',
-            'category_id' => 'nullable | exists:App\Category,id', // Ricordarsi di aggiungerlo al 'fillable'
-            'tags.*' => 'exists:tags,id' // Devono esistere nella tabella tags,id
+            'category_id' => 'nullable | exists:categories,id', // Ricordarsi di aggiungerlo al 'fillable'
+            'tags.*' => 'exists:tags,id', // Devono esistere nella tabella tags,id
+            'image' => 'nullable | image | max:2048'
         ]);
 
         // Aggiungo controllo nella quale lo slug sia univoco
         // Richiamo il metodo statico 'getUniqueSlugFrom' creato in Post.php
 
         $params['slug'] = Post::getUniqueSlugFrom($params['title']);
+
+        if(array_key_exists('image', $params)) {
+            $img_path = Storage::put('uploads', $params['image']);
+            $params['cover'] = $img_path;
+        }
 
         $post = Post::create($params);
 
@@ -104,7 +110,7 @@ class PostController extends Controller
         $params = $request->validate([
             'title' => 'required | max:255 | min:5',
             'content' => 'required',
-            'category_id' => 'nullable | exists:App\Category,id', // Ricordarsi di aggiungerlo al 'fillable'
+            'category_id' => 'nullable | exists:categories,id', // Ricordarsi di aggiungerlo al 'fillable'
             'tags.*' => 'exists:tags,id' // Devono esistere nella tabella tags,id
         ]);
 
