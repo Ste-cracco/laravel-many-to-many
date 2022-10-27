@@ -8,6 +8,8 @@ use App\Category;
 use App\Tag;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Mail;
+use App\SendPostControllerMail;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
@@ -70,6 +72,10 @@ class PostController extends Controller
             $tags = $params['tags'];
             $post->tags()->sync($tags);
         }
+
+
+        // Invio Mail
+        Mail::to('prova@gmail.com')->send(new SendPostControllerMail($post)); // Importare use Illuminate\Support\Facades\Mail;
 
         return redirect()->route('admin.post.show', $post);
     }
