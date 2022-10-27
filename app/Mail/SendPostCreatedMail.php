@@ -28,8 +28,8 @@ class SendPostCreatedMail extends Mailable
      *
      * @return $this
      */
-    public function build()
+    public function build(Post $post)
     {
-        return $this->view('mails.post_created');
+        return $this->view('mails.post_created', $post);
     }
 }

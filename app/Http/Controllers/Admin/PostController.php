@@ -9,7 +9,7 @@ use App\Tag;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Mail;
-use App\SendPostControllerMail;
+use App\Mail\SendPostCreatedMail;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
@@ -75,7 +75,7 @@ class PostController extends Controller
 
 
         // Invio Mail
-        Mail::to('prova@gmail.com')->send(new SendPostControllerMail($post)); // Importare use Illuminate\Support\Facades\Mail;
+        Mail::to('prova@gmail.com')->send(new SendPostCreatedMail($post)); // Importare use Illuminate\Support\Facades\Mail;
 
         return redirect()->route('admin.post.show', $post);
     }
