@@ -7,6 +7,7 @@ use App\Post;
 use App\Category;
 use App\Tag;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
@@ -58,7 +59,7 @@ class PostController extends Controller
         $params['slug'] = Post::getUniqueSlugFrom($params['title']);
 
         if(array_key_exists('image', $params)) {
-            $img_path = Storage::put('uploads', $params['image']);
+            $img_path = Storage::put('uploads', $params['image']); // Importare use Illuminate\Support\Facades\Storage;
             $params['cover'] = $img_path;
         }
 
