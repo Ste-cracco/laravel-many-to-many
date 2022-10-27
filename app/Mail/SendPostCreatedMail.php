@@ -6,6 +6,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
+use App\Post;
 
 class SendPostCreatedMail extends Mailable
 {
@@ -18,7 +19,7 @@ class SendPostCreatedMail extends Mailable
      *
      * @return void
      */
-    public function __construct(Post $post)
+    public function __construct(Post $post) // Importare use App\Post;
     {
         $this->post = $post;
     }
@@ -28,8 +29,12 @@ class SendPostCreatedMail extends Mailable
      *
      * @return $this
      */
-    public function build(Post $post)
-    {
-        return $this->view('mails.post_created', $post);
+    public function build()
+    {   
+        // Senza Markdown
+        // return $this->view('mails.post_created');
+
+        // Con Markdown
+        return $this->markdown('mails.post_created');
     }
 }
